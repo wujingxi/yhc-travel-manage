@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css"  media="all">
+  <link rel="stylesheet" href="__PUBLIC__/font-awesome/css/font-awesome.min.css" media="all" />
+  <link rel="stylesheet" href="__CSS__/admin.css"  media="all">
+  <style type="text/css">
+
+/* tooltip */
+#tooltip{
+  position:absolute;
+  border:1px solid #ccc;
+  background:#333;
+  padding:2px;
+  display:none;
+  color:#fff;
+}
+</style>
+</head>
+<body style="padding:10px;">
+  <div class="tplay-body-div">
+    <div class="layui-tab">
+      <ul class="layui-tab-title">
+        <li class="layui-this">用户列表</li>
+      </ul>
+    </div> 
+    <form class="layui-form serch" action="{:url('admin/user/index')}" method="post">
+        <div class="layui-form-item" style="float: left;">
+          <div class="layui-input-inline">
+            <input type="text" name="keywords" lay-verify="title" autocomplete="off" placeholder="请输入关键词" class="layui-input layui-btn-sm">
+          </div>
+          <div class="layui-input-inline">
+            <div class="layui-inline">
+              <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="create_time" placeholder="授权时间" name="reg_time">
+              </div>
+            </div>
+          </div>
+          <button class="layui-btn layui-btn-danger layui-btn-sm" lay-submit="" lay-filter="serch">立即提交</button>
+        </div>
+      </form> 
+    <table class="layui-table" lay-size="sm">
+      <colgroup>
+        <col width="50">
+        <col width="100">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>头像</th>
+          
+          <th>昵称</th>
+          <th>授权时间</th>
+          <th>绑定手机</th>
+        </tr> 
+      </thead>
+      <tbody>
+        {volist name="user" id="vo"}
+        <tr>
+          <td>{$vo.id}</td>
+          <td><a href="{$vo.avatar}" class="tooltip"><img src="{$vo.avatar}" width="40" height="40"></a></td>
+          <td>{$vo.nickname}</td>
+          <td>{$vo.reg_time}</td>
+          <td>{$vo.mobile}</td>
+        </tr>
+        {/volist}
+      </tbody>
+    </table>
+    <div style="padding:0 20px;">{$user->render()}</div>
+
+    {include file="public/foot"}
+    
+    <script type="text/javascript">
+
+    
+    </script>
+  </div>
+</body>
+</html>

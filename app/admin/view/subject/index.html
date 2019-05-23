@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="__PUBLIC__/layui/css/layui.css"  media="all">
+  <link rel="stylesheet" href="__PUBLIC__/font-awesome/css/font-awesome.min.css" media="all" />
+  <link rel="stylesheet" href="__CSS__/admin.css"  media="all">
+  <style type="text/css">
+
+/* tooltip */
+#tooltip{
+  position:absolute;
+  border:1px solid #ccc;
+  background:#333;
+  padding:2px;
+  display:none;
+  color:#fff;
+}
+</style>
+</head>
+<body style="padding:10px;">
+  <div class="tplay-body-div">
+    <div class="layui-tab">
+      <ul class="layui-tab-title">
+        <li class="layui-this">科目列表</li>
+      </ul>
+    </div> 
+    <table class="layui-table" lay-size="sm">
+      <colgroup>
+        <col width="50">
+        <col width="200">
+        <col width="200">
+        <col width="200">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>序号</th>
+          <th>类目</th>          
+          <th>级别</th>
+          <th>操作</th>
+        </tr> 
+      </thead>
+      <tbody>
+        {volist name="sujectArrs" id="vo" key="k"}
+        <tr>
+          <td>{$k}</td>
+          <td>{$vo.name}</td>
+          <td>一级</td>
+          <td class="operation-menu">
+              <div class="layui-btn-group">
+                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-primary edit_one" data-id="{$vo.id}" data-name="{$vo.name}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+                <a class="layui-btn layui-btn-xs layui-btn-primary delete" data-pid="{$vo.id}" data-subid="0" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+              </div>
+            </td> 
+        </tr>
+          {volist name="vo.sub" id="sb" key="sk"}
+            <tr>
+              <td> </td>
+              <td>  └ {$sb.name}</td>
+              <td>  └ 二级</td>
+              <td class="operation-menu">
+                <div class="layui-btn-group">
+                  <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-primary edit_two" data-subid="{$sb.sub_id}" data-pid="{$sb.pid}" data-name="{$sb.name}" style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+                  <a class="layui-btn layui-btn-xs layui-btn-primary delete" data-pid="{$sb.pid}" data-subid="{$sb.sub_id}"  style="margin-right: 0;font-size:12px;"><i class="layui-icon"></i></a>
+                </div>
+              </td> 
+            </tr>
+          {/volist}
+          <tr>
+              <td> </td>
+              <td class="operation-menu" colspan="3">
+                  <div class="layui-btn-group" style="margin-left: 20px;">
+                     <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-primary edit_two" data-subid="0" data-pid="{$vo.id}" data-name="" title="添加二级" style="margin-right: 0;font-size:12px;"><i class="layui-icon">+</i></a>
+                  </div>
+                </td>               
+            </tr>
+        {/volist}
+        <tr>
+          <td colspan="2"></td>
+          <td class="operation-menu" colspan="2">
+              <div class="layui-btn-group">
+                <a href="javascript:;" class="layui-btn layui-btn-xs layui-btn-primary edit_one" data-id="0" data-name="" title="添加一级" style="margin-right: 0;font-size:12px;">新增一级科目</a>
+              </div>
+            </td> 
+        </tr>
+      </tbody>
+    </table>
+
+    {include file="public/foot"}
+    
+    <script type="text/javascript">
+      $('.edit_one').click(function(){
+        var id = $(this).attr('data-id');
+        var edit_title = id>0?'编辑一级科目':'添加一级科目';
+        var provalue = $(this).attr('data-name');
+        layer.prompt({
+          formType: 0,
+          value: provalue,
+          title: edit_title,
+          maxlength: 10,
+          area: ['600px', '150px'] //自定义文本域宽高
+        }, function(value, index, elem){
+            var newvalue = value; 
+            layer.confirm('确定要提交吗?', function(index) {         
+            $.ajax({
+              url:"{:url('admin/subject/editsubjectone')}",
+              data:{id:id,value:newvalue},
+              type:'post',
+              async: false,
+              success:function(res) {
+                layer.msg(res.msg);
+                if(res.code == 1) {
+                  setTimeout(function(){
+                    location.href = res.url;
+                  },1500)
+                }
+              }
+            });
+          });
+        });        
+      });      
+      $('.edit_two').click(function(){
+        var subid = $(this).attr('data-subid');
+        var pid = $(this).attr('data-pid');
+        var edit_title = subid>0?'编辑二级科目':'添加二级科目';
+        var provalue = $(this).attr('data-name');
+        layer.prompt({
+          formType: 0,
+          value: provalue,
+          title: edit_title,
+          maxlength: 10,
+          area: ['600px', '150px'] //自定义文本域宽高
+        }, function(value, index, elem){
+            var newvalue = value; 
+            layer.confirm('确定要提交吗?', function(index) {         
+            $.ajax({
+              url:"{:url('admin/subject/editsubjecttwo')}",
+              data:{subid:subid,pid:pid,value:newvalue},
+              type:'post',
+              async: false,
+              success:function(res) {
+                layer.msg(res.msg);
+                if(res.code == 1) {
+                  setTimeout(function(){
+                    location.href = res.url;
+                  },1500)
+                }
+              }
+            });
+          });
+        });        
+      });      
+
+      $('.delete').click(function(){
+        var pid = $(this).attr('data-pid');
+        var subid = $(this).attr('data-subid');
+        layer.confirm('确定要删除?', function(index) {
+          $.ajax({
+            url:"{:url('admin/subject/delsubject')}",
+            data:{pid:pid,subid:subid},
+            type:'post',
+            async: false,
+            success:function(res) {
+              layer.msg(res.msg);
+              if(res.code == 1) {
+                setTimeout(function(){
+                  location.href = res.url;
+                },1500)
+              }
+            }
+          })
+        })
+      }) 
+    </script>
+  </div>
+</body>
+</html>
